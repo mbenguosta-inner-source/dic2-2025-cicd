@@ -61,9 +61,9 @@ jobs:
             exit 1;
           fi
 
-  build:
+  dev:
     runs-on: ubuntu-latest
-    name: Build & push Docker image
+    name: Build & push Docker image to dev
     needs: security
     steps:
       # Step 1: Check out the repository
@@ -81,3 +81,24 @@ jobs:
       # Step 4: Publish To DockerHub
       - name: Push Docker image to Docker  hub
         run: docker push ${{ secrets.DOCKER_USERNAME }}/docker-app:${{ github.sha }}
+
+  prod:
+    runs-on: ubuntu-latest
+    name: Build & push Docker image to prod
+    needs: [dev, security]
+    steps:
+      # Step 1: Check out the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Build
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.PROD_DOCKER_USERNAME }}/docker-app:${{ github.sha }} .
+
+      # Step 3: Log in to dockerHub
+      - name: log in to Docker hub
+        run: echo "${{ secrets.PROD_DOCKER_PASSWORD }}" | docker login -u "${{ secrets.PROD_DOCKER_USERNAME }}" --password-stdin
+
+      # Step 4: Publish To DockerHub
+      - name: Push Docker image to Docker  hub
+        run: docker push ${{ secrets.PROD_DOCKER_USERNAME }}/docker-app:${{ github.sha }}
