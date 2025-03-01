@@ -63,8 +63,8 @@ jobs:
 
   dev:
     runs-on: ubuntu-latest
-    name: Build & push Docker image to dev
-    needs: security
+    name: Build & push DEV
+    needs: test
     steps:
       # Step 1: Check out the repository
       - name: Checkout code
@@ -84,7 +84,7 @@ jobs:
 
   prod:
     runs-on: ubuntu-latest
-    name: Build & push Docker image to prod
+    name: Build & push PROD
     needs: [dev, security]
     steps:
       # Step 1: Check out the repository
