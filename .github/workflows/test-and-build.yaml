@@ -52,4 +52,4 @@ jobs:
 
       # Step 4: Publish To DockerHub
       - name: Push Docker image to Docker  hub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/cicd-node-app:${{ github.sha }}
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/docker-app:${{ github.sha }}
