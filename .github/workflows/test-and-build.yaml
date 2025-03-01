@@ -85,7 +85,7 @@ jobs:
   prod:
     runs-on: ubuntu-latest
     name: Build & push PROD
-    needs: [dev, security]
+    needs: [ security]
     steps:
       # Step 1: Check out the repository
       - name: Checkout code
