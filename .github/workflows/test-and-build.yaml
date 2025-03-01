@@ -33,10 +33,38 @@ jobs:
       - name: Run Unit Tests
         run: npm test
 
+
+  security:
+    runs-on: ubuntu-latest
+    name: Security Scanning
+    needs: test  # Ensure this runs after the test job
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Trivy
+        run: |
+          sudo apt-get install -y wget
+          TRIVY_VERSION=0.43.0
+          wget "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.deb"
+          sudo dpkg -i "trivy_${TRIVY_VERSION}_Linux-64bit.deb"
+          rm "trivy_${TRIVY_VERSION}_Linux-64bit.deb"
+
+      - name: Run Trivy scan
+        run: trivy fs --exit-code 1 --severity HIGH,CRITICAL .
+
+      - name: Fail if vulnerabilities found
+        run: |
+          if [ $? -ne 0 ]; then
+            echo "Vulnerabilities found!";
+            exit 1;
+          fi
+
   build:
     runs-on: ubuntu-latest
     name: Build & push Docker image
-    needs: test
+    needs: security
     steps:
       # Step 1: Check out the repository
       - name: Checkout code
