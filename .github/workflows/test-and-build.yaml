@@ -9,7 +9,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
+    name: lint & units test
     steps:
       # Step 1: Check out the repository
       - name: Checkout code
